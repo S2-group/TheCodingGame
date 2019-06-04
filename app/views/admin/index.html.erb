@@ -1,0 +1,25 @@
+<%= stylesheet_pack_tag 'management' %>
+
+<h1>Admin</h1>
+
+<h2>Download progress report json file</h2>
+<%= link_to('here', '/admin.json', target: :_blank) %>
+
+<hr />
+
+<h2>Upload a new config here</h2>
+
+Careful! This will delete all current level, including users and progress.
+<%= form_tag('/admin', multipart: true) do %>
+  <%= file_field_tag('config') %>
+  <br />
+  <%= submit_tag %>
+<% end %>
+
+<% if @error  %>
+  <div>
+    <h3>Error: <%= @error.class.name %></h3>
+
+    <%= @error.message %>
+  </div>
+<% end %>

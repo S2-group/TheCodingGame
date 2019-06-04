@@ -1,24 +1,33 @@
 <template>
   <v-card>
-    <v-card-title>
-      {{ status.gameIntroMessage }}
-    </v-card-title>
-    <v-card-text>
-      <v-list>
-        <v-list-tile>
-          <v-list-tile-title>
-            Select Level
-          </v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile
-          exact
-          v-for="level in levels"
-          :to="`/levels/${level.identifier}`"
-          :key="level.identifier"
-        >
-          {{ level.identifier }}
-        </v-list-tile>
-      </v-list>
+    <v-card-text v-if="!loading" class="pa-5">
+      <template v-if="status.finished">
+        <div v-html="status.gameConclusionMessage" />
+      </template>
+
+      <template v-else-if="status.levelNumber == null">
+        <div v-html="status.gameIntroMessage" />
+        <v-btn :to="`/levels/${levelIdentifier}`">
+          Get started with the first level!
+        </v-btn>
+      </template>
+
+      <template v-else>
+        <template v-if="status.stepNumber != null">
+          You still got work todo in level
+
+          <v-btn :to="`/levels/${levelIdentifier}`">
+            {{ currentLevelNumber }}
+          </v-btn>
+        </template>
+
+        <template v-if="status.stepNumber == null">
+          Get started with level
+          <v-btn :to="`/levels/${levelIdentifier}`">
+            {{ currentLevelNumber }}
+          </v-btn>
+        </template>
+      </template>
     </v-card-text>
   </v-card>
 </template>
@@ -29,11 +38,24 @@ import { getLevels, getStatus } from '../services/api'
 export default {
   data: () => ({
     levels: [],
-    status: {}
+    status: {},
+    loading: true
   }),
+  computed: {
+    currentLevelNumber() {
+      return this.status.levelNumber || 0
+    },
+    levelIdentifier() {
+      return this.status.levelIdentifier
+    }
+  },
   mounted() {
-    getLevels().then(result => (this.levels = result.levels))
-    getStatus().then(result => (this.status = result.status))
+    Promise.all([getStatus(), getLevels()])
+      .then(([statusData, levelsData]) => {
+        this.status = statusData.status
+        this.levels = levelsData.levels
+      })
+      .then(() => (this.loading = false))
   }
 }
 </script>

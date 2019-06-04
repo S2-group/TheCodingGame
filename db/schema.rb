@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_095850) do
+ActiveRecord::Schema.define(version: 2019_04_27_090303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,13 @@ ActiveRecord::Schema.define(version: 2019_03_01_095850) do
     t.datetime "updated_at", null: false
     t.bigint "question_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "answers_results", id: false, force: :cascade do |t|
+    t.bigint "result_id", null: false
+    t.bigint "answer_id", null: false
+    t.index ["answer_id"], name: "index_answers_results_on_answer_id"
+    t.index ["result_id"], name: "index_answers_results_on_result_id"
   end
 
   create_table "game_configs", force: :cascade do |t|
@@ -39,6 +46,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_095850) do
     t.string "next_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "order"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -47,7 +55,18 @@ ActiveRecord::Schema.define(version: 2019_03_01_095850) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "step_id"
+    t.integer "order"
     t.index ["step_id"], name: "index_questions_on_step_id"
+  end
+
+  create_table "results", force: :cascade do |t|
+    t.integer "score"
+    t.bigint "step_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["step_id"], name: "index_results_on_step_id"
+    t.index ["user_id"], name: "index_results_on_user_id"
   end
 
   create_table "steps", force: :cascade do |t|
@@ -61,7 +80,22 @@ ActiveRecord::Schema.define(version: 2019_03_01_095850) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "level_id"
+    t.integer "order"
     t.index ["level_id"], name: "index_steps_on_level_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "crypted_password"
+    t.string "salt"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "level_id"
+    t.bigint "step_id"
+    t.boolean "finished"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["level_id"], name: "index_users_on_level_id"
+    t.index ["step_id"], name: "index_users_on_step_id"
   end
 
 end
