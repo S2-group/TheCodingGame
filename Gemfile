@@ -7,7 +7,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'jbuilder', '~> 2.5'
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 gem 'pg'
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.3'
 gem 'rails', '~> 5.2.3'
 gem 'rubyzip'
 gem 'sorcery'
